@@ -52,39 +52,33 @@ setup_project_dependencies()
 # ============================================
 
 set(SOURCES
-    src/main.cpp
-    # Engine - Audio
+src/main.cpp
     src/engine/audio/audio_player.cpp
-    # Engine - Core
     src/engine/core/game_app.cpp
     src/engine/core/time.cpp
     src/engine/core/config.cpp
     src/engine/core/context.cpp
     src/engine/core/game_state.cpp
-    # Engine - Resource
     src/engine/resource/resource_manager.cpp
     src/engine/resource/texture_manager.cpp
     src/engine/resource/audio_manager.cpp
     src/engine/resource/font_manager.cpp
-    # Engine - Render
     src/engine/render/renderer.cpp
     src/engine/render/camera.cpp
+    src/engine/render/animation.cpp
     src/engine/render/text_renderer.cpp
-    # Engine - Input
     src/engine/input/input_manager.cpp
-    # Engine - Loader
-    src/engine/loader/level_loader.cpp
-    src/engine/loader/basic_entity_builder.cpp
-    # Engine - Scene
+    src/engine/object/game_object.cpp
+    src/engine/component/sprite_component.cpp
+    src/engine/component/transform_component.cpp
+    src/engine/component/parallax_component.cpp
+    src/engine/component/tilelayer_component.cpp
+    src/engine/component/animation_component.cpp
+    src/engine/component/health_component.cpp
+    src/engine/component/audio_component.cpp
     src/engine/scene/scene.cpp
     src/engine/scene/scene_manager.cpp
-    # Engine - System
-    src/engine/system/audio_system.cpp
-    src/engine/system/animation_system.cpp
-    src/engine/system/render_system.cpp
-    src/engine/system/movement_system.cpp
-    src/engine/system/ysort_system.cpp
-    # Engine - UI
+    # src/engine/scene/level_loader.cpp
     src/engine/ui/ui_manager.cpp
     src/engine/ui/ui_element.cpp
     src/engine/ui/ui_interactive.cpp
@@ -95,44 +89,7 @@ set(SOURCES
     src/engine/ui/state/ui_normal_state.cpp
     src/engine/ui/state/ui_pressed_state.cpp
     src/engine/ui/state/ui_hover_state.cpp
-    # Game - Data
-    src/game/data/session_data.cpp
-    src/game/data/ui_config.cpp
-    src/game/data/level_config.cpp
-    # Game - Factory
-    src/game/factory/blueprint_manager.cpp
-    src/game/factory/entity_factory.cpp
-    # Game - Loader
-    src/game/loader/entity_builder_mw.cpp
-    # Game - Scene
     src/game/scene/game_scene.cpp
-    src/game/scene/title_scene.cpp
-    src/game/scene/end_scene.cpp
-    src/game/scene/level_clear_scene.cpp
-    # Game - Spawner
-    src/game/spawner/enemy_spawner.cpp
-    # Game - System
-    src/game/system/followpath_system.cpp
-    src/game/system/remove_dead_system.cpp
-    src/game/system/block_system.cpp
-    src/game/system/attack_starter_system.cpp
-    src/game/system/timer_system.cpp
-    src/game/system/orientation_system.cpp
-    src/game/system/set_target_system.cpp
-    src/game/system/animation_state_system.cpp
-    src/game/system/animation_event_system.cpp
-    src/game/system/combat_resolve_system.cpp
-    src/game/system/projectile_system.cpp
-    src/game/system/effect_system.cpp
-    src/game/system/health_bar_system.cpp
-    src/game/system/game_rule_system.cpp
-    src/game/system/place_unit_system.cpp
-    src/game/system/render_range_system.cpp
-    src/game/system/debug_ui_system.cpp
-    src/game/system/selection_system.cpp
-    src/game/system/skill_system.cpp
-    # Game - UI
-    src/game/ui/units_portrait_ui.cpp
 )
 
 # Windows平台添加资源文件

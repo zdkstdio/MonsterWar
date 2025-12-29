@@ -1,5 +1,4 @@
 #pragma once
-#include <entt/signal/fwd.hpp>
 // 前置声明核心系统
 namespace engine::input {
     class InputManager;
@@ -21,7 +20,6 @@ namespace engine::audio {
 
 namespace engine::core {
     class GameState;
-    class Time;
 
 /**
  * @brief 持有对核心引擎模块引用的上下文对象。
@@ -31,7 +29,6 @@ namespace engine::core {
 class Context final {
 private:
     // 使用引用，确保每个模块都有效，使用时不需要检查指针是否为空。
-    entt::dispatcher& dispatcher_;                          ///< @brief 事件分发器
     engine::input::InputManager& input_manager_;            ///< @brief 输入管理器
     engine::render::Renderer& renderer_;                    ///< @brief 渲染器
     engine::render::Camera& camera_;                        ///< @brief 相机
@@ -39,29 +36,21 @@ private:
     engine::resource::ResourceManager& resource_manager_;   ///< @brief 资源管理器
     engine::audio::AudioPlayer& audio_player_;              ///< @brief 音频播放器
     engine::core::GameState& game_state_;                   ///< @brief 游戏状态
-    engine::core::Time& time_;                              ///< @brief 时间
 public:
     /**
      * @brief 构造函数。
-     * @param dispatcher 对事件分发器的引用。
      * @param input_manager 对 InputManager 实例的引用。
      * @param renderer 对 Renderer 实例的引用。
      * @param camera 对 Camera 实例的引用。
-     * @param text_renderer 对 TextRenderer 实例的引用。
      * @param resource_manager 对 ResourceManager 实例的引用。
-     * @param audio_player 对 AudioPlayer 实例的引用。
-     * @param game_state 对 GameState 实例的引用。
-     * @param time 对 Time 实例的引用。
      */
-    Context(entt::dispatcher& dispatcher,
-            engine::input::InputManager& input_manager,
+    Context(engine::input::InputManager& input_manager,
             engine::render::Renderer& renderer,
             engine::render::Camera& camera,
             engine::render::TextRenderer& text_renderer,
             engine::resource::ResourceManager& resource_manager,
             engine::audio::AudioPlayer& audio_player,
-            engine::core::GameState& game_state,
-            engine::core::Time& time);
+            engine::core::GameState& game_state);
 
     // 禁止拷贝和移动，Context 对象通常是唯一的或按需创建/传递
     Context(const Context&) = delete;
@@ -70,7 +59,6 @@ public:
     Context& operator=(Context&&) = delete;
 
     // --- Getters ---
-    entt::dispatcher& getDispatcher() const { return dispatcher_; }                             ///< @brief 获取事件分发器
     engine::input::InputManager& getInputManager() const { return input_manager_; }             ///< @brief 获取输入管理器
     engine::render::Renderer& getRenderer() const { return renderer_; }                         ///< @brief 获取渲染器
     engine::render::Camera& getCamera() const { return camera_; }                               ///< @brief 获取相机
@@ -78,7 +66,6 @@ public:
     engine::resource::ResourceManager& getResourceManager() const { return resource_manager_; } ///< @brief 获取资源管理器
     engine::audio::AudioPlayer& getAudioPlayer() const { return audio_player_; }                 ///< @brief 获取音频播放器
     engine::core::GameState& getGameState() const { return game_state_; }                         ///< @brief 获取游戏状态
-    engine::core::Time& getTime() const { return time_; }                                         ///< @brief 获取时间
 };
 
 } // namespace engine::core

@@ -1,11 +1,12 @@
 #pragma once
-#include "image.h"
-#include "../component/sprite_component.h"
+#include "sprite.h"
 #include "../utils/math.h"
-#include <optional>
+#include <string>
+#include <optional> // For std::optional
 
 struct SDL_Renderer;
 struct SDL_FRect;
+struct SDL_FColor;
 
 namespace engine::resource {
     class ResourceManager;
@@ -25,8 +26,6 @@ class Renderer final{
 private:
     SDL_Renderer* renderer_ = nullptr;                              ///< @brief 指向 SDL_Renderer 的非拥有指针
     engine::resource::ResourceManager* resource_manager_ = nullptr; ///< @brief 指向 ResourceManager 的非拥有指针
-
-    engine::utils::FColor background_color_{0.0f, 0.0f, 0.0f, 1.0f};///< @brief 清除屏幕的颜色（默认黑色），可调用setBgColorFloat设置
     
 public:
     /**
@@ -41,53 +40,33 @@ public:
     /**
      * @brief 绘制一个精灵
      * 
-     * @param camera 游戏相机，用于坐标转换。
      * @param sprite 包含纹理ID、源矩形和翻转状态的 Sprite 对象。
      * @param position 世界坐标中的左上角位置。
-     * @param size 精灵的大小。
-     * @param rotation 旋转角度（度）。
-     * @param color 调整颜色。(原始颜色*调整颜色，默认为白色，即不调整)
+     * @param scale 缩放因子。
+     * @param angle 旋转角度（度）。
      */
-    void drawSprite(const Camera& camera, const component::Sprite& sprite, const glm::vec2& position, 
-                    const glm::vec2& size, const float rotation = 0.0f, const engine::utils::FColor& color = engine::utils::FColor::white());
+    void drawSprite(const Camera& camera, const Sprite& sprite, const glm::vec2& position, 
+                    const glm::vec2& scale = {1.0f, 1.0f}, double angle = 0.0f);
 
     /**
-     * @brief 绘制填充圆形
-     * @note 必须存在默认圆形纹理"assets/textures/UI/circle.png"
+     * @brief 绘制视差滚动背景
      * 
-     * @param position 圆形中心位置
-     * @param radius 圆形半径
-     * @param color 填充颜色
+     * @param sprite 包含纹理ID、源矩形和翻转状态的 Sprite 对象。
+     * @param position 世界坐标。
+     * @param scroll_factor 滚动因子。
+     * @param scale 缩放因子。
      */
-     void drawFilledCircle(const Camera& camera, const glm::vec2& position, const float radius, 
-        const engine::utils::FColor& color = engine::utils::FColor::white());
+    void drawParallax(const Camera& camera, const Sprite& sprite, const glm::vec2& position, 
+                      const glm::vec2& scroll_factor, glm::bvec2 repeat = {true, true}, const glm::vec2& scale = {1.0f, 1.0f});
 
     /**
-     * @brief 绘制填充矩形
-     * 
-     * @param position 矩形左上角位置
-     * @param size 矩形大小
-     * @param color 填充颜色
-     */
-    void drawFilledRect(const Camera& camera, const glm::vec2& position, const glm::vec2& size, const engine::utils::FColor& color);
-
-    /**
-     * @brief 绘制矩形边框
-     * 
-     * @param position 矩形左上角位置
-     * @param size 矩形大小
-     * @param color 边框颜色
-     */
-    void drawRect(const Camera& camera, const glm::vec2& position, const glm::vec2& size, const engine::utils::FColor& color, const int thickness = 1);
-    
-    /**
-     * @brief 在屏幕坐标中直接渲染一个用于UI的Image对象。
+     * @brief 在屏幕坐标中直接渲染一个用于UI的Sprite对象。
      *
-     * @param image 包含纹理ID、源矩形和翻转状态的Image对象。
+     * @param sprite 包含纹理ID、源矩形和翻转状态的Sprite对象。
      * @param position 屏幕坐标中的左上角位置。
-     * @param size 可选：目标矩形的大小。如果为 std::nullopt，则使用Image的原始大小。
+     * @param size 可选：目标矩形的大小。如果为 std::nullopt，则使用Sprite的原始大小。
      */
-    void drawUIImage(const Image& image, const glm::vec2& position, const std::optional<glm::vec2>& size = std::nullopt);
+    void drawUISprite(const Sprite& sprite, const glm::vec2& position, const std::optional<glm::vec2>& size = std::nullopt);
 
     /**
      * @brief 绘制填充矩形
@@ -103,8 +82,6 @@ public:
     void setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);        ///< @brief 设置绘制颜色，包装 SDL_SetRenderDrawColor 函数，使用 Uint8 类型
     void setDrawColorFloat(float r, float g, float b, float a = 1.0f);  ///< @brief 设置绘制颜色，包装 SDL_SetRenderDrawColorFloat 函数，使用 float 类型
 
-    void setBgColorFloat(float r, float g, float b, float a = 1.0f) { background_color_ = {r, g, b, a}; }    ///< @brief 设置背景颜色，使用 float 类型
-
     SDL_Renderer* getSDLRenderer() const { return renderer_; }          ///< @brief 获取底层的 SDL_Renderer 指针
 
     // 禁用拷贝和移动语义
@@ -114,7 +91,7 @@ public:
     Renderer& operator=(Renderer&&) = delete;
 
 private:
-    std::optional<SDL_FRect> getImageSrcRect(const Image& image);       ///< @brief 获取Image的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
+    std::optional<SDL_FRect> getSpriteSrcRect(const Sprite& sprite);     ///< @brief 获取精灵的源矩形，用于具体绘制。出现错误则返回std::nullopt并跳过绘制
     bool isRectInViewport(const Camera& camera, const SDL_FRect& rect);  ///< @brief 判断矩形是否在视口中，用于视口裁剪
 
 };

@@ -11,13 +11,12 @@ namespace engine::ui::state {
 class UIPressedState final: public UIState {
     friend class engine::ui::UIInteractive;
 public:
-    UIPressedState(engine::ui::UIInteractive* owner);
-    ~UIPressedState();
+    UIPressedState(engine::ui::UIInteractive* owner) : UIState(owner) {}
+    ~UIPressedState() override = default;
 
 private:
     void enter() override;
-
-    bool onMouseReleased();
+    std::unique_ptr<UIState> handleInput(engine::core::Context& context) override;
 };
 
 } // namespace engine::ui::state

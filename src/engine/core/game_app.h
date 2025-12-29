@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <functional>
-#include <entt/signal/fwd.hpp>
 
 // 前向声明, 减少头文件的依赖，增加编译速度
 struct SDL_Window;
@@ -45,10 +44,9 @@ private:
     bool is_running_ = false;
 
     /// @brief 游戏场景设置函数，用于在运行游戏前设置初始场景 (GameApp不再决定初始场景是什么)
-    std::function<void(engine::core::Context&)> scene_setup_func_;
+    std::function<void(engine::scene::SceneManager&)> scene_setup_func_;
 
     // 引擎组件
-    std::unique_ptr<entt::dispatcher> dispatcher_;  // 事件分发器
     std::unique_ptr<engine::core::Time> time_;
     std::unique_ptr<engine::resource::ResourceManager> resource_manager_;
     std::unique_ptr<engine::render::Renderer> renderer_;
@@ -75,7 +73,7 @@ public:
      *        这个函数将在 SceneManager 初始化后被调用。
      * @param func 一个接收 SceneManager 引用的函数对象。
      */
-    void registerSceneSetup(std::function<void(engine::core::Context&)> func);
+    void registerSceneSetup(std::function<void(engine::scene::SceneManager&)> func);
 
     // 禁止拷贝和移动
     GameApp(const GameApp&) = delete;
@@ -91,10 +89,8 @@ private:
     void close();
 
     // 各模块的初始化/创建函数，在init()中调用
-    [[nodiscard]] bool initDispatcher();
     [[nodiscard]] bool initConfig();
     [[nodiscard]] bool initSDL();
-    [[nodiscard]] bool initGameState();
     [[nodiscard]] bool initTime();
     [[nodiscard]] bool initResourceManager();
     [[nodiscard]] bool initAudioPlayer();
@@ -102,12 +98,9 @@ private:
     [[nodiscard]] bool initTextRenderer();
     [[nodiscard]] bool initCamera();
     [[nodiscard]] bool initInputManager();
+    [[nodiscard]] bool initGameState();
     [[nodiscard]] bool initContext();
     [[nodiscard]] bool initSceneManager();
-    [[nodiscard]] bool initImGui();
-
-    // 事件处理函数
-    void onQuitEvent();
 };
 
 } // namespace engine::core

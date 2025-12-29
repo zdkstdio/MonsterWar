@@ -16,7 +16,6 @@ enum class State {
     Playing,        ///< @brief 正常游戏进行中
     Paused,         ///< @brief 游戏暂停（通常覆盖菜单界面）
     GameOver,       ///< @brief 游戏结束界面
-    LevelClear      ///< @brief 关卡过关界面
     // 可以根据需要添加更多状态，如 Cutscene, SettingsMenu 等
 };
 
@@ -47,10 +46,6 @@ public:
     void setWindowSize(const glm::vec2& window_size);   // 这里并不涉及到(成员变量)赋值，所以不需要move
     glm::vec2 getLogicalSize() const;
     void setLogicalSize(const glm::vec2& logical_size);
-    
-    // 关闭/启用逻辑分辨率的函数，主要用于ImGui使用
-    bool disableLogicalPresentation();      ///< @brief 关闭逻辑分辨率，返回是否成功
-    bool enableLogicalPresentation();       ///< @brief 启用逻辑分辨率，返回是否成功
 
 
     // --- 便捷查询方法 ---
@@ -59,7 +54,6 @@ public:
     bool isPlaying() const { return current_state_ == State::Playing; }
     bool isPaused() const { return current_state_ == State::Paused; }
     bool isGameOver() const { return current_state_ == State::GameOver; }
-    bool isLevelClear() const { return current_state_ == State::LevelClear; }
 
 };
 

@@ -16,7 +16,7 @@ public:
 
 private:
     void enter() override;
-    void update(float delta_time, engine::core::Context& context) override;
+    std::unique_ptr<UIState> handleInput(engine::core::Context& context) override;
 };
 
 } // namespace engine::ui::state

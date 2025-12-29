@@ -1,34 +1,18 @@
 #include "engine/core/game_app.h"
-#include "engine/core/context.h"
-#include "game/scene/title_scene.h"
-#include "engine/utils/events.h"
+#include "engine/scene/scene_manager.h"
+#include "game/scene/game_scene.h"
 #include <spdlog/spdlog.h>
 #include <SDL3/SDL_main.h>
-#include <entt/signal/dispatcher.hpp>
 
-// 只在 Windows 平台上包含 Windows.h
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-
-// 在程序开始时设置控制台编码
-void initialize_environment() {
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-#endif
-}
-
-void setupInitialScene(engine::core::Context& context) {
+void setupInitialScene(engine::scene::SceneManager& scene_manager) {
     // GameApp在调用run方法之前，先创建并设置初始场景
-    auto title_scene = std::make_unique<game::scene::TitleScene>(context);
-    context.getDispatcher().trigger<engine::utils::PushSceneEvent>(engine::utils::PushSceneEvent{std::move(title_scene)});
+    auto game_scene = std::make_unique<CGameScene>(scene_manager.getContext(), scene_manager);
+    scene_manager.requestPushScene(std::move(game_scene));
 }
 
 
 int main(int /* argc */, char* /* argv */[]) {
-    initialize_environment();
-    spdlog::set_level(spdlog::level::info);
+    spdlog::set_level(spdlog::level::off);
 
     engine::core::GameApp app;
     app.registerSceneSetup(setupInitialScene);

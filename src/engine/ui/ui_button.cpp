@@ -2,29 +2,32 @@
 #include "state/ui_normal_state.h"
 #include <spdlog/spdlog.h>
 
-using namespace entt::literals;
-
 namespace engine::ui {
 UIButton::UIButton(engine::core::Context& context,
-                   engine::render::Image normal_image, 
-                   engine::render::Image hover_image, 
-                   engine::render::Image pressed_image, 
+                   std::string_view normal_sprite_id, 
+                   std::string_view hover_sprite_id, 
+                   std::string_view pressed_sprite_id, 
                    glm::vec2 position, 
                    glm::vec2 size, 
-                   std::function<void()> click_callback,
-                   std::function<void()> hover_enter_callback,
-                   std::function<void()> hover_leave_callback)
-    : UIInteractive(context, std::move(position), std::move(size)), click_callback_(std::move(click_callback)), hover_enter_callback_(std::move(hover_enter_callback)), hover_leave_callback_(std::move(hover_leave_callback))
+                   std::function<void()> callback)
+    : UIInteractive(context, std::move(position), std::move(size)), callback_(std::move(callback))
 {
-    // 注意正常、悬浮、按下都有默认的键名称，如果需要替换的话则覆盖该键下的值
-    addImage("normal"_hs, std::move(normal_image));
-    addImage("hover"_hs, std::move(hover_image));
-    addImage("pressed"_hs, std::move(pressed_image));
+    addSprite("normal", std::make_unique<engine::render::Sprite>(normal_sprite_id));
+    addSprite("hover", std::make_unique<engine::render::Sprite>(hover_sprite_id));
+    addSprite("pressed", std::make_unique<engine::render::Sprite>(pressed_sprite_id));
 
     // 设置默认状态为"normal"
     setState(std::make_unique<engine::ui::state::UINormalState>(this));
 
+    // 设置默认音效
+    addSound("hover", "assets/audio/button_hover.wav");
+    addSound("pressed", "assets/audio/button_click.wav");
     spdlog::trace("UIButton 构造完成");
+}
+
+void UIButton::clicked()
+{
+    if (callback_) callback_();
 }
 
 } // namespace engine::ui
