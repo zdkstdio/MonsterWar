@@ -7,6 +7,7 @@
 #include <SDL3/SDL_render.h>
 #include <glm/vec2.hpp>
 #include <entt/signal/sigh.hpp>
+#include <array>
 
 namespace engine::core {
     class Config;

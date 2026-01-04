@@ -4,7 +4,6 @@
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 #include <glm/vec2.hpp>
-#include <entt/signal/sigh.hpp>
 
 namespace engine::input {
 
