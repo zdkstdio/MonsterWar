@@ -6,6 +6,7 @@
 #include <variant>
 #include <SDL3/SDL_render.h>
 #include <glm/vec2.hpp>
+#include <entt/signal/sigh.hpp>
 
 namespace engine::core {
     class Config;
@@ -14,10 +15,10 @@ namespace engine::core {
 namespace engine::input {
 
 enum class ActionState {
-    INACTIVE,           ///< @brief 动作未激活
-    PRESSED_THIS_FRAME, ///< @brief 动作在本帧刚刚被按下
-    HELD_DOWN,          ///< @brief 动作被持续按下
-    RELEASED_THIS_FRAME ///< @brief 动作在本帧刚刚被释放
+    PRESSED, ///< @brief 动作在本帧刚刚被按下
+    HELD,          ///< @brief 动作被持续按下
+    RELEASED, ///< @brief 动作在本帧刚刚被释放
+    INACTIVE           ///< @brief 动作未激活
 };
 
 /**
@@ -29,8 +30,8 @@ enum class ActionState {
 class InputManager final {
 private:
     SDL_Renderer* sdl_renderer_;                                            ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
-    std::unordered_map<std::string, std::vector<std::string>> actions_to_keyname_map_;      ///< @brief 存储动作名称到按键名称列表的映射
-    std::unordered_map<std::variant<SDL_Scancode, Uint32>, std::vector<std::string>> input_to_actions_map_;///< @brief 从输入到关联的动作名称列表
+    std::unordered_map<std::string, std::array<entt::sigh<void()>, 3>> actions_to_func_;      ///< @brief 存储动作名称到按键名称列表的映射
+    std::unordered_map<std::variant<SDL_Scancode, Uint32>, std::vector<std::string>> input_to_actions_;///< @brief 从输入到关联的动作名称列表
 
     std::unordered_map<std::string, ActionState> action_states_;    ///< @brief 存储每个动作的当前状态
 
@@ -45,6 +46,8 @@ public:
      * @throws std::runtime_error 如果任一指针为 nullptr。
      */
     InputManager(SDL_Renderer* sdl_renderer, const engine::core::Config* config);
+
+    entt::sink<entt::sigh<void()>> onAction(std::string_view action_name, ActionState action_state = ActionState::PRESSED);
 
     void update();                                    ///< @brief 更新输入状态，每轮循环最先调用
 
